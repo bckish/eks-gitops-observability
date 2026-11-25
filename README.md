@@ -8,7 +8,7 @@ Terraform lab for an AWS VPC and deployment host, a private EKS cluster, Argo CD
 
 ## Layout and local validation
 
-The [vpc-ec2](vpc-ec2/) root prepares networking and the deployment host; the [eks](eks/) root configures the cluster and Helm releases. Both use [module](module/) and require Terraform 1.13.x (at least 1.13.3).
+The [vpc-ec2](vpc-ec2/) root prepares networking and the deployment host; the [eks](eks/) root configures the cluster and Helm releases. Both use [module](module/) and require Terraform 1.13.3 or later, below 2.0. Run `bash validate.sh` to initialize and validate both roots without loading remote state, planning or applying. This is a cloud infrastructure repository, not a locally deployable EKS cluster.
 
 ```bash
 git clone https://github.com/bckish/eks-gitops-observability.git
