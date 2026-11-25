@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.13.3"
+  required_version = ">= 1.13.3, < 2.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -11,8 +11,6 @@ terraform {
     }
   }
   backend "s3" {
-    bucket       = "dev-aman-tf-bucket"
-    region       = "us-east-1"
     key          = "EKS-ArgoCD-AWS-LB-Controller-Terraform/vpc-ec2.tfstate"
     use_lockfile = true
     encrypt      = true

@@ -1,0 +1,14 @@
+name: Offline infrastructure validation
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.8
+      - name: Validate and plan with mock providers only
+        run: bash validate.sh
