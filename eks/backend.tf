@@ -15,8 +15,6 @@ terraform {
     }
   }
   backend "s3" {
-    bucket       = "dev-aman-tf-bucket"
-    region       = "us-east-1"
     key          = "EKS-ArgoCD-AWS-LB-Controller-Terraform/eks.tfstate"
     use_lockfile = true
     encrypt      = true
