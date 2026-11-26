@@ -12,3 +12,5 @@ jobs:
           terraform_version: 1.14.8
       - name: Validate and plan with mock providers only
         run: bash validate.sh
+      - name: Check local chart validation script syntax
+        run: bash -n scripts/local-chart-check.sh

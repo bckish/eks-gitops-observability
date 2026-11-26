@@ -50,3 +50,19 @@ The EKS-specific Terraform roots were validated and tested with mock providers i
 The Argo CD chart is now pinned to 10.20.0 (Argo CD 3.6.3), which renders without the old Helm values coalescing warning and starts all seven Argo CD components in local Kind. Removed obsolete top-level monitoring chart values for PodSecurityPolicy and persistent storage; storage must be explicitly configured using the supported `prometheus.prometheusSpec.storageSpec` if required. No paid AWS resources were created.
 
 The new Argo CD chart reconciled local revisions `ba89310` and `08232e4` using the rebuilt task application, returned Synced/Healthy, and repaired replica drift back to two ready API replicas. Both Terraform roots validated and both mocked plans passed. This was a fresh local installation, not an in-place migration of a production Argo CD installation; existing users should review upstream upgrade instructions before applying.
+
+## Warning-free local chart verification (26 November 2026)
+
+Kubernetes 1.34.0 incorrectly warned about valid numeric CRD formats and default session affinity on headless services. Upstream fixed both server-side regressions ([numeric formats](https://github.com/kubernetes/kubernetes/pull/133896), [headless services](https://github.com/kubernetes/kubernetes/pull/134054)); the fixes were backported to 1.34. The same Argo CD 10.20.0 and kube-prometheus-stack 65.0.0 charts installed and upgraded without these warnings on Kubernetes v1.34.3. No CRD schema or chart warning was suppressed.
+
+Use Kind and a matching kubectl v1.34.3 on a disposable cluster. The check rejects remote contexts and fails if Helm emits warnings:
+
+```bash
+kind create cluster --name observability-local --image kindest/node:v1.34.3 --kubeconfig ./observability-local.kubeconfig
+bash scripts/local-chart-check.sh ./observability-local.kubeconfig
+kind delete cluster --name observability-local --kubeconfig ./observability-local.kubeconfig
+```
+
+Both charts use ClusterIP-only services for this check. AWS-specific Terraform remains unchanged; this is not evidence of an EKS upgrade or cloud deployment.
+
+The follow-up run confirmed all monitoring pods Ready and a successful Prometheus `up` query with 17 returned targets. Both Terraform roots and mocked plans passed again.
