@@ -39,8 +39,14 @@ Tested code: `901bdac` (merged main). The exact chart versions declared by the i
 Reproduce the local chart installation in an isolated Kind cluster (use its specific kubeconfig):
 
 ```bash
-helm --kubeconfig /path/to/local-kind.kubeconfig upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --version 5.46.0 --namespace argocd --create-namespace --set server.service.type=ClusterIP --set server.ingress.enabled=false
+helm --kubeconfig /path/to/local-kind.kubeconfig upgrade --install argocd argo-cd --repo https://argoproj.github.io/argo-helm --version 10.20.0 --namespace argocd --create-namespace --set server.service.type=ClusterIP --set server.ingress.enabled=false
 helm --kubeconfig /path/to/local-kind.kubeconfig upgrade --install monitoring kube-prometheus-stack --repo https://prometheus-community.github.io/helm-charts --version 65.0.0 --namespace monitoring --create-namespace --set grafana.service.type=ClusterIP --set prometheus.service.type=ClusterIP
 ```
 
 The EKS-specific Terraform roots were validated and tested with mock providers in the earlier pass. Actual AWS EKS, IAM, VPC, AWS Load Balancer Controller and remote state were **not deployed or verified**.
+
+## Dependency maintenance (26 November 2026)
+
+The Argo CD chart is now pinned to 10.20.0 (Argo CD 3.6.3), which renders without the old Helm values coalescing warning and starts all seven Argo CD components in local Kind. Removed obsolete top-level monitoring chart values for PodSecurityPolicy and persistent storage; storage must be explicitly configured using the supported `prometheus.prometheusSpec.storageSpec` if required. No paid AWS resources were created.
+
+The new Argo CD chart reconciled local revisions `ba89310` and `08232e4` using the rebuilt task application, returned Synced/Healthy, and repaired replica drift back to two ready API replicas. Both Terraform roots validated and both mocked plans passed. This was a fresh local installation, not an in-place migration of a production Argo CD installation; existing users should review upstream upgrade instructions before applying.

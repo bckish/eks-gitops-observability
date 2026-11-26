@@ -8,15 +8,8 @@ resource "helm_release" "prometheus-helm" {
 
   timeout = 2000
 
-  set {
-    name  = "podSecurityPolicy.enabled"
-    value = true
-  }
-
-  set {
-    name  = "server.persistentVolume.enabled"
-    value = true
-  }
+  # Persistent storage, if required, must be explicitly configured through
+  # prometheus.prometheusSpec.storageSpec for this chart.
 
   set {
     name  = "grafana.service.type"
